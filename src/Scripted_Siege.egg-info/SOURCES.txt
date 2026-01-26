@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/main.py
+src/Scripted_Siege.egg-info/PKG-INFO
+src/Scripted_Siege.egg-info/SOURCES.txt
+src/Scripted_Siege.egg-info/dependency_links.txt
+src/Scripted_Siege.egg-info/requires.txt
+src/Scripted_Siege.egg-info/top_level.txt
+src/engine/__init__.py
+src/game/__init__.py

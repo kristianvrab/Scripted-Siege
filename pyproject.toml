@@ -1,0 +1,14 @@
+[project]
+name = "Scripted-Siege"
+version = "0.0.1"
+description = "Tower defense game"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Roland More" }
+]
+
+dependencies = [
+    "pygame>=2.5.0"
+]

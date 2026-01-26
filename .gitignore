@@ -1,0 +1,6 @@
+# Environment
+.venv
+.vscode
+
+# Moje zeby neprotestoval windows
+allowscripts.txt

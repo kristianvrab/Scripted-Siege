@@ -1,5 +1,5 @@
 import pygame
-from engine import game_window, game
+from engine import game  # engine logika
 
 # ---------- INITIALIZATION ----------
 pygame.init()
@@ -9,19 +9,19 @@ pygame.display.set_caption("Scripted Siege")
 CLOCK = pygame.time.Clock()
 
 # ---------- ENGINE SETUP ----------
-ENGINE_WINDOW = game_window.GameWindow(WIDTH, HEIGHT, "Scripted Siege")
-SIEGE = game.Game()
+SIEGE = game.Game()  # engine logika
 
 # ---------- GLOBAL FONTS ----------
 FONT_TITLE = pygame.font.SysFont(None, 100)
 FONT_MENU = pygame.font.SysFont(None, 50)
 
 # ---------- CLASSES ----------
+
 class Menu:
     def __init__(self, screen):
         self.screen = screen
         self.buttons = {}
-    
+
     def draw(self):
         mouse_pos = pygame.mouse.get_pos()
 
@@ -48,32 +48,33 @@ class Menu:
         self.buttons["quit"] = quit_rect
 
 class GameEngine:
-    def __init__(self, siege, window):
+    def __init__(self, siege, screen):
         self.siege = siege
-        self.window = window
+        self.screen = screen
 
     def run(self):
-        # Run ONE frame of the engine
+        # Run ONE frame of the engine into the existing SCREEN
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.window.running = False
+                return False  # signal to quit
 
         self.siege.processInput()
         self.siege.update()
         self.siege.render()
+        return True
 
 # ---------- MAIN LOOP ----------
 def main():
     menu_screen = Menu(SCREEN)
-    engine = GameEngine(SIEGE, ENGINE_WINDOW)
+    engine = GameEngine(SIEGE, SCREEN)
 
-    game_state = "menu"
+    game_state = "menu"  # start hneď v menu
     running = True
 
     while running:
         mouse_pos = pygame.mouse.get_pos()
-        SCREEN.fill("black")  # default background
 
+        # Handle menu/game events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -93,11 +94,15 @@ def main():
         if game_state == "menu":
             menu_screen.draw()
         elif game_state == "game":
-            engine.run()
+            cont = engine.run()
+            if not cont:
+                running = False
 
         pygame.display.update()
         CLOCK.tick(60)
+
     pygame.quit()
 
+# ---------- RUN ----------
 if __name__ == "__main__":
     main()

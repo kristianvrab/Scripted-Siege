@@ -22,20 +22,24 @@ class Menu:
         self.screen = screen
         self.buttons = {}
 
+        # Načítanie obrázku pozadia
+        self.background = pygame.image.load("./assets/images/menu_image.png").convert_alpha()
+        self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT)) 
+
     def draw(self):
         mouse_pos = pygame.mouse.get_pos()
 
-        # Title
+        self.screen.blit(self.background, (0, 0))
+
         title_text = FONT_TITLE.render("SCRIPTED SIEGE", True, "white")
         title_rect = title_text.get_rect(center=(WIDTH//2, 120))
-        self.screen.fill("gray10")
         self.screen.blit(title_text, title_rect)
 
         # Play button
         play_text = FONT_MENU.render("Play", True, "white")
         play_rect = play_text.get_rect(center=(WIDTH//2, 300))
         if play_rect.collidepoint(mouse_pos):
-            play_text = FONT_MENU.render("Play", True, "red")
+            play_text = FONT_MENU.render("Play", True, "yellow")
         self.screen.blit(play_text, play_rect)
         self.buttons["play"] = play_rect
 
@@ -43,9 +47,10 @@ class Menu:
         quit_text = FONT_MENU.render("Quit", True, "white")
         quit_rect = quit_text.get_rect(center=(WIDTH//2, 380))
         if quit_rect.collidepoint(mouse_pos):
-            quit_text = FONT_MENU.render("Quit", True, "red")
+            quit_text = FONT_MENU.render("Quit", True, "yellow")
         self.screen.blit(quit_text, quit_rect)
         self.buttons["quit"] = quit_rect
+
 
 class GameEngine:
     def __init__(self, siege, screen):

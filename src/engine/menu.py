@@ -1,24 +1,28 @@
 import pygame
-from config import WIDTH
+from config import WIDTH,HEIGHT
 
 class Menu:
     def __init__(self, screen):
         self.screen = screen
-        self.font_title = pygame.font.SysFont(None, 80)
-        self.font_button = pygame.font.SysFont(None, 40)
+        self.font_title = pygame.font.SysFont(None, 120)
+        self.font_button = pygame.font.SysFont(None, 80)
         self.buttons = {}
+        # load image for background
+        self.background = pygame.image.load("./assets/images/menu.png").convert()
+        self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
+
 
         # Pre-render text
-        self.title_text = self.font_title.render("SCRIPTED SIEGE", True, "white")
-        self.play_text = self.font_button.render("Play", True, "white")
+        self.title_text = self.font_title.render("SCRIPTED SIEGE", True, "black")
+        self.play_text = self.font_button.render("Play", True, "grey")
         self.play_text_hover = self.font_button.render("Play", True, "red")
-        self.quit_text = self.font_button.render("Quit", True, "white")
+        self.quit_text = self.font_button.render("Quit", True, "grey")
         self.quit_text_hover = self.font_button.render("Quit", True, "red")
 
         # Precompute rects once (positions are static)
-        self.title_rect = self.title_text.get_rect(center=(WIDTH//2, 120))
-        self.play_rect = self.play_text.get_rect(center=(WIDTH//2, 280))
-        self.quit_rect = self.quit_text.get_rect(center=(WIDTH//2, 340))
+        self.title_rect = self.title_text.get_rect(center=(WIDTH//2, 60))
+        self.play_rect = self.play_text.get_rect(center=(WIDTH//2, 270))
+        self.quit_rect = self.quit_text.get_rect(center=(WIDTH//2, 360))
 
         # Store rects for external access
         self.buttons["play"] = self.play_rect
@@ -26,6 +30,7 @@ class Menu:
 
     def draw(self, mouse_pos):
         self.screen.fill("gray10")
+        self.screen.blit(self.background, (0, 0))
 
         # Title
         self.screen.blit(self.title_text, self.title_rect)

@@ -1,6 +1,6 @@
 import pygame
 from engine import game_window, game
-from config import WIDTH,HEIGHT
+from game.config import WIDTH, HEIGHT, FPS
 
 pygame.init()
 
@@ -17,9 +17,10 @@ while window.running:
 
     siege.update()
 
+    window.screen.fill("black")
     siege.render(mouse_pos)
     pygame.display.update()
 
-    clock.tick(60)
+    clock.tick(FPS)
 
 pygame.quit()

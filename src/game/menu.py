@@ -1,5 +1,5 @@
 import pygame
-from config import WIDTH,HEIGHT
+from game.config import WIDTH,HEIGHT
 
 class Menu:
     def __init__(self, screen):
@@ -7,10 +7,10 @@ class Menu:
         self.font_title = pygame.font.SysFont(None, 120)
         self.font_button = pygame.font.SysFont(None, 80)
         self.buttons = {}
+
         # load image for background
         self.background = pygame.image.load("./assets/images/menu.png").convert()
         self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
-
 
         # Pre-render text
         self.title_text = self.font_title.render("SCRIPTED SIEGE", True, "black")
@@ -35,7 +35,6 @@ class Menu:
         # Title
         self.screen.blit(self.title_text, self.title_rect)
 
-        # Mozno by som presunul cast do inputu
         # Play button
         if self.play_rect.collidepoint(mouse_pos):
             self.screen.blit(self.play_text_hover, self.play_rect)

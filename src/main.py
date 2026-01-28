@@ -1,8 +1,7 @@
 import pygame
 from engine import game_window, game
+from config import WIDTH,HEIGHT
 pygame.init()
-
-WIDTH, HEIGHT = 800, 600
 
 window = game_window.GameWindow(WIDTH, HEIGHT, "Scripted Siege")
 siege = game.Game(window.screen)

@@ -14,9 +14,7 @@ class Game:
 
         self.menu = Menu(screen)
 
-    def processInput(self):
-        mouse_pos = pygame.mouse.get_pos()
-
+    def processInput(self, mouse_pos):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -39,10 +37,9 @@ class Game:
         if self.state == "in_game":
             pass  
 
-    def render(self):
+    def render(self, mouse_pos):
         if self.state == "menu":
-            self.menu.draw()
+            self.menu.draw(mouse_pos)
 
         elif self.state == "in_game":
             self.screen.fill("black")
-            

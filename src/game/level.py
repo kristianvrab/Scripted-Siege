@@ -113,7 +113,7 @@ class Level:
             self.spawn_timer += 1
             if self.spawn_timer > 40 and self.spawn_queue:
                 self.enemies.add(
-                    Enemy(self.waypoints, self.spawn_queue.pop(0))
+                    Enemy(self.waypoints, self.spawn_queue.pop(0),self)
                 )
                 self.spawn_timer = 0
 
@@ -232,7 +232,7 @@ class Level:
 # ===================== ENEMY =====================
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, waypoints, e_type):
+    def __init__(self, waypoints, e_type,level):
         super().__init__()
         s = ENEMY_TYPES[e_type]
 
@@ -255,6 +255,7 @@ class Enemy(pygame.sprite.Sprite):
         self.fire_timer = 0
         self.freeze_timer = 0
         self.reached_end = False
+        self.level = level
 
     def update(self):
         # --- FIRE DOT ---
@@ -279,7 +280,9 @@ class Enemy(pygame.sprite.Sprite):
             self.target_idx += 1
             if self.target_idx >= len(self.waypoints):
                 self.reached_end = True
+                self.level.base_hp -= self.base_damage
                 self.kill()
+                
         else:
             self.rect.centerx += (dx/dist) * self.speed
             self.rect.centery += (dy/dist) * self.speed

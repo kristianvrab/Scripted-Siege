@@ -84,4 +84,3 @@ class Game:
 
     def keyPressed(self, key):
         return key in self._keys_pressed
-

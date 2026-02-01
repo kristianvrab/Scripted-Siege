@@ -1,14 +1,12 @@
 import pygame
-import time
 import math
 from game.config import *
 
-
 # ===================== LEVEL =====================
-
 class Level:
-    def __init__(self, screen):
+    def __init__(self, screen, sound):
         self.screen = screen
+        self.sound = sound
         self.money = STARTING_MONEY
         self.base_hp = BASE_HP
 
@@ -37,18 +35,17 @@ class Level:
         self.in_wave = False
         self.show_info = False
 
+        # UI
         self.ui_panel_x = WIDTH - 200
         self.shop_buttons = {t: pygame.Rect(self.ui_panel_x+20, 160+i*60, 160, 45)
                              for i, t in enumerate(TOWER_TYPES.keys())}
         self.grid_toggle_rect = pygame.Rect(self.ui_panel_x+20, HEIGHT-110, 160, 45)
         self.info_btn_rect = pygame.Rect(self.ui_panel_x+20, HEIGHT-55, 160, 45)
         self.start_wave_rect = pygame.Rect(self.ui_panel_x+20, 430, 160, 50)
-
         self.info_rect = pygame.Rect(100, 100, 800, 500)
         self.info_close_rect = pygame.Rect(860, 110, 30, 30)
 
     # ---------------- WAVE ----------------
-
     def prepare_wave(self):
         self.spawn_queue = []
         w = self.wave_num
@@ -70,7 +67,6 @@ class Level:
         self.in_wave = True
 
     # ---------------- INPUT ----------------
-
     def handle_click(self, mouse_pos):
         if self.show_info:
             if self.info_close_rect.collidepoint(mouse_pos):
@@ -96,7 +92,7 @@ class Level:
 
         gx, gy = mouse_pos[0] // TILE_SIZE, mouse_pos[1] // TILE_SIZE
         if self.can_place_tower(gx, gy):
-            self.towers.add(Tower(gx, gy, self.selected_type))
+            self.towers.add(Tower(gx, gy, self.selected_type, self))  # <-- level param
             self.money -= TOWER_TYPES[self.selected_type]["cost"]
 
     def can_place_tower(self, gx, gy):
@@ -107,13 +103,12 @@ class Level:
         return False
 
     # ---------------- UPDATE ----------------
-
     def update(self):
         if self.in_wave:
             self.spawn_timer += 1
             if self.spawn_timer > 40 and self.spawn_queue:
                 self.enemies.add(
-                    Enemy(self.waypoints, self.spawn_queue.pop(0),self)
+                    Enemy(self.waypoints, self.spawn_queue.pop(0), self)
                 )
                 self.spawn_timer = 0
 
@@ -133,7 +128,6 @@ class Level:
                 e.kill()
 
     # ---------------- DRAW ----------------
-
     def draw(self, mouse_pos):
         gx, gy = mouse_pos[0] // TILE_SIZE, mouse_pos[1] // TILE_SIZE
 
@@ -166,11 +160,9 @@ class Level:
             self.draw_info_screen()
 
     # ---------------- UI ----------------
-
     def draw_ui(self):
         pygame.draw.rect(self.screen, (20,20,20), (self.ui_panel_x, 0, 200, HEIGHT))
         f = pygame.font.SysFont(None, 28)
-
         self.screen.blit(f.render(f"Gold: {self.money}$", True, GOLD), (self.ui_panel_x+20, 20))
         self.screen.blit(f.render(f"HP: {self.base_hp}", True, RED), (self.ui_panel_x+20, 50))
         self.screen.blit(f.render(f"Wave: {self.wave_num}", True, WHITE), (self.ui_panel_x+20, 80))
@@ -228,11 +220,9 @@ class Level:
         for i, l in enumerate(txt):
             self.screen.blit(fi.render(l, True, WHITE), (130, 150+i*30))
 
-
 # ===================== ENEMY =====================
-
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, waypoints, e_type,level):
+    def __init__(self, waypoints, e_type, level):
         super().__init__()
         s = ENEMY_TYPES[e_type]
 
@@ -281,8 +271,8 @@ class Enemy(pygame.sprite.Sprite):
             if self.target_idx >= len(self.waypoints):
                 self.reached_end = True
                 self.level.base_hp -= self.base_damage
+                self.level.sound.base_hit.play()
                 self.kill()
-                
         else:
             self.rect.centerx += (dx/dist) * self.speed
             self.rect.centery += (dy/dist) * self.speed
@@ -302,42 +292,38 @@ class Enemy(pygame.sprite.Sprite):
             return
         ratio = max(0, self.hp) / self.max_hp
         pygame.draw.rect(screen, RED,
-            (self.rect.centerx-15, self.rect.top-10, 30, 4))
+                         (self.rect.centerx-15, self.rect.top-10, 30, 4))
         pygame.draw.rect(screen, GREEN,
-            (self.rect.centerx-15, self.rect.top-10, 30*ratio, 4))
+                         (self.rect.centerx-15, self.rect.top-10, 30*ratio, 4))
 
 # ===================== TOWER =====================
-
 class Tower(pygame.sprite.Sprite):
-    def __init__(self, gx, gy, t_type):
+    def __init__(self, gx, gy, t_type, level):
         super().__init__()
         self.gx, self.gy = gx, gy
+        self.level = level
         self.stats = TOWER_TYPES[t_type]
         self.type = t_type
+        self.cooldown = 0
 
         self.image = pygame.Surface((TILE_SIZE-20, TILE_SIZE-20))
         self.image.fill(self.stats["color"])
         self.rect = self.image.get_rect(
-            center=(gx*TILE_SIZE+TILE_SIZE//2,
-                    gy*TILE_SIZE+TILE_SIZE//2)
+            center=(gx*TILE_SIZE+TILE_SIZE//2, gy*TILE_SIZE+TILE_SIZE//2)
         )
-
-        self.cooldown = 0
 
     def update(self, enemies, projectiles):
         if self.cooldown > 0:
             self.cooldown -= 1
             return
-
         for e in enemies:
             if pygame.math.Vector2(self.rect.center).distance_to(e.rect.center) < self.stats["range"]:
                 projectiles.add(Projectile(self.rect.center, e, self.type))
+                self.level.sound.shoot.play()
                 self.cooldown = self.stats["cooldown"]
                 break
 
-
 # ===================== PROJECTILE =====================
-
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, pos, target, t_type):
         super().__init__()
@@ -360,15 +346,14 @@ class Projectile(pygame.sprite.Sprite):
 
         if dist < self.speed:
             dmg = 8
-
             if self.type == "fire":
                 self.target.fire_timer = 300
-
             elif self.type == "freeze":
                 dmg = 4
                 self.target.freeze_timer = 120
 
             self.target.hp -= dmg
+            self.target.level.sound.hit.play()
             self.kill()
         else:
             self.rect.centerx += (dx / dist) * self.speed

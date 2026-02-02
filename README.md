@@ -1,41 +1,36 @@
 # Scripted Siege
 
-Jednoduchý 2D Tower Defense projekt napsaný v Pythonu (Pygame).
+Jednoduchý 2D Tower Defense projekt napísaný v Pythone (Pygame).
 
-## O projektu
-Scripted Siege rozděluje kód na jádro hry (engine) a herní obsah (game). Hráč umisťuje věže podél cesty a brání se proti vlnám nepřátel.
+## O projekte
+Scripted Siege rozdeľuje kód na jadro hry (engine) a herný obsah (game). Hráč umiestňuje veže pozdĺž cesty a bráni sa proti vlnám nepriateľov.
 
-## Požadavky
-- Python 3.8+ (nebo novější)
+## Požiadavky
+- Python 3.8+ (alebo novší)
 - Pygame
 
-Instalace závislostí:
+Inštalácia závislostí:
 
 ```bash
 pip install pygame
 ```
 
-## Spuštění
+## Spustenie
 
-Spusť hru z kořenového adresáře:
+Spusti hru z koreňového adresára:
 
 ```bash
 python src/main.py
 ```
 
-## Základní ovládání
-- Levé tlačítko myši: výběr a umístění věží, interakce s UI
-- ESC: návrat do hlavního menu
-- Přepínání rychlosti hry a ovládání zvuku v menu
+## Základné ovládanie
+- Ľavé tlačidlo myši: výber a umiestnenie veží, interakcia s UI
+- ESC: návrat do hlavného menu
+- Prepínanie rýchlosti hry a ovládanie zvuku v menu
 
-## Struktura projektu (vybrané soubory)
-- `src/main.py` – vstupní bod a hlavní smyčka
-- `src/engine/` – jádro (okno, sound manager, správa stavu)
-- `src/game/` – herní logika (úrovně, nepřátelé, věže, konfigurace)
+## Štruktúra projektu (vybrané súbory)
+- `src/main.py` – vstupný bod a hlavná slučka
+- `src/engine/` – jadro (okno, sound manager, správa stavu)
+- `src/game/` – herná logika (úrovne, nepriatelia, veže, konfigurácia)
 - `assets/` – zvuky a obrázky
 
-## Přispění
-Pokud chceš přispět, otevři issue nebo vytvoř pull request s popisem změn.
-
----
-Pokud chceš, mohu přidat stručný obsah (TOC), KaTeX podporu nebo rozšířené instrukce pro vývoj.

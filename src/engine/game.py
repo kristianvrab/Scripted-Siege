@@ -9,16 +9,14 @@ class Game:
         self.sound = SoundManager()
         self.state = "menu"
         self.menu = Menu(screen)
-        self.level = Level(screen, self.sound)  # Level dostane sound
+        self.level = Level(screen, self.sound)
         self.should_quit = False
 
-        # input tracking
         self._mbuttons_used = [pygame.BUTTON_LEFT]
         self._keys_used = [pygame.K_ESCAPE]
         self._mbuttons_pressed = []
         self._keys_pressed = []
 
-    # ---------- INPUT ----------
     def collectInput(self):
         self._mbuttons_pressed.clear()
         self._keys_pressed.clear()
@@ -36,43 +34,34 @@ class Game:
         mouse_pos = pygame.mouse.get_pos()
         
         self.collectInput()
-        if self.should_quit:
-            return False
+        if self.should_quit: return False
 
-        # --- MENU ---
         if self.state == "menu":
             if self.mousePressed(pygame.BUTTON_LEFT):
                 if self.menu.buttons["play"].collidepoint(mouse_pos):
-                    self.level = Level(self.screen, self.sound)  # prepni na novú hru
+                    self.level = Level(self.screen, self.sound)
                     self.state = "in_game"
                 if self.menu.buttons["quit"].collidepoint(mouse_pos):
                     return False
 
-        # --- IN GAME ---
         elif self.state == "in_game":
             if self.keyPressed(pygame.K_ESCAPE):
                 self.state = "menu"
             if self.mousePressed(pygame.BUTTON_LEFT):
                 self.level.handle_click(mouse_pos)
 
-        # --- GAME OVER ---
-        elif self.state == "game_over":
-            if self.keyPressed(pygame.K_ESCAPE):
-                self.state = "menu"
-
         return True
 
-    # ---------- UPDATE ----------
     def update(self):
         if self.state == "menu":
             self.sound.play_menu()
         if self.state == "in_game":
             self.sound.play_game()
             self.level.update()
-            if self.level.base_hp <= 0:
-                self.state = "game_over"
+            # Reset hry ak hrac klikol na RESTART
+            if self.level.need_restart:
+                self.level = Level(self.screen, self.sound)
 
-    # ---------- RENDER ----------
     def render(self):
         mouse_pos = pygame.mouse.get_pos()
 
@@ -80,12 +69,7 @@ class Game:
             self.menu.draw(mouse_pos)
         elif self.state == "in_game":
             self.level.draw(mouse_pos)
-        elif self.state == "game_over":
-            self.screen.fill((50, 0, 0))
-            font = pygame.font.SysFont(None, 100)
-            self.screen.blit(font.render("GAME OVER", True, (255, 255, 255)), (400, 300))
 
-    # ---------- INPUT HELPERS ----------
     def mousePressed(self, button):
         return button in self._mbuttons_pressed
 

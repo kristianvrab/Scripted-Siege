@@ -32,7 +32,9 @@ class Game:
                 if event.key in self._keys_used:
                     self._keys_pressed.append(event.key)
 
-    def processInput(self, mouse_pos):
+    def processInput(self):
+        mouse_pos = pygame.mouse.get_pos()
+        
         self.collectInput()
         if self.should_quit:
             return False
@@ -62,13 +64,18 @@ class Game:
 
     # ---------- UPDATE ----------
     def update(self):
+        if self.state == "menu":
+            self.sound.play_menu()
         if self.state == "in_game":
+            self.sound.play_game()
             self.level.update()
             if self.level.base_hp <= 0:
                 self.state = "game_over"
 
     # ---------- RENDER ----------
-    def render(self, mouse_pos):
+    def render(self):
+        mouse_pos = pygame.mouse.get_pos()
+
         if self.state == "menu":
             self.menu.draw(mouse_pos)
         elif self.state == "in_game":

@@ -33,4 +33,6 @@ python src/main.py
 - `src/engine/` – jadro (okno, sound manager, správa stavu)
 - `src/game/` – herná logika (úrovne, nepriatelia, veže, konfigurácia)
 - `assets/` – zvuky a obrázky
+## Zvuky zo stránky:
+- https://freesound.org
 
